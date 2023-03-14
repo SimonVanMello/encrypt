@@ -1,10 +1,11 @@
-import sys
+import sys, os
 import base64
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto import Random
 from getpass import getpass
 from pathlib import Path
+import json
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,6 +17,10 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+def loadData() -> dict:
+    with open("/home/tropico/Sync/code/Scripts/encrypt/settings.json") as f:
+        return json.load(f)
 
 def decrypt(key: str, source: str, decode=True) -> str:
     key = key.encode()
@@ -48,6 +53,9 @@ def readFile(path: str) -> str:
 def writeFile(path: str, text: str):
     with open(path, "w") as f:
         f.write(text)
+
+def deleteFile(path: str):
+	os.remove(path)
 
 def printHelp():
     print("--------------------------------------------------------------------------------")
@@ -92,6 +100,9 @@ def main(args: list):
             decryptedFile = decrypt(decryptionPassword, encryptedFile)
             writeFile(path[:-4], decryptedFile)
             print(f"{bcolors.OKGREEN}-> Correct password{bcolors.ENDC}")
+            if settings["removeOriginalAfterEncryption"] == "True":
+                deleteFile(path)
+                print(f"-> Deleted encrypted file")
             print(fr"-> Decrypted file location: {bcolors.WARNING}{path[:-4]}{bcolors.ENDC}")
         except:
             print(f"{bcolors.FAIL}-> Incorrect password{bcolors.ENDC}")
@@ -112,8 +123,14 @@ def main(args: list):
         password = getPassword(True)
         encryptedData = encrypt(password, dataToEncrypt)
         writeFile(path, encryptedData)
+        if settings["removeOriginalAfterEncryption"] == "True":
+            deleteFile(path[:-4])
+            print(f"-> Deleted old file")
         print(f"-> Encrypted file location: {bcolors.WARNING}{path}{bcolors.ENDC}")
 
 
-
-main(sys.argv[1:])
+try:
+    settings = loadData()
+    main(sys.argv[1:])
+except KeyboardInterrupt:
+    pass
