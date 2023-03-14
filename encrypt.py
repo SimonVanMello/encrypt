@@ -69,7 +69,7 @@ def getPassword(confirmation: bool) -> str:
         pass1 = getpass("Encryption password: ")
         pass2 = getpass("Confirm your password: ")
         if pass1 != pass2:
-            print(f"{bcolors.FAIL}-> Error: password mismatch{bcolors.ENDC}")
+            print(f"{bcolors.FAIL}-> Error: passwords mismatch{bcolors.ENDC}")
             return getPassword(confirmation)
         else: 
             return pass1
@@ -100,7 +100,7 @@ def main(args: list):
             decryptedFile = decrypt(decryptionPassword, encryptedFile)
             writeFile(path[:-4], decryptedFile)
             print(f"{bcolors.OKGREEN}-> Correct password{bcolors.ENDC}")
-            if settings["removeOriginalAfterEncryption"] == "True":
+            if settings["removeOriginalAfterEncryption"] == "TRUE":
                 deleteFile(path)
                 print(f"-> Deleted encrypted file")
             print(fr"-> Decrypted file location: {bcolors.WARNING}{path[:-4]}{bcolors.ENDC}")
@@ -123,14 +123,17 @@ def main(args: list):
         password = getPassword(True)
         encryptedData = encrypt(password, dataToEncrypt)
         writeFile(path, encryptedData)
-        if settings["removeOriginalAfterEncryption"] == "True":
+        if settings["removeOriginalAfterEncryption"] == "TRUE":
             deleteFile(path[:-4])
-            print(f"-> Deleted old file")
+            print(f"-> Deleted original file")
         print(f"-> Encrypted file location: {bcolors.WARNING}{path}{bcolors.ENDC}")
 
 
 try:
     settings = loadData()
+    settings["removeOriginalAfterEncryption"] = settings["removeOriginalAfterEncryption"].upper()
     main(sys.argv[1:])
 except KeyboardInterrupt:
     pass
+except Exception as e:
+    print(f"{bcolors.FAIL}-> Error:{bcolors.ENDC}\n{e}")
