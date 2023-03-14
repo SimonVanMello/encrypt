@@ -116,7 +116,6 @@ def main(args: list):
         try:
             dataToEncrypt = readFile(path)
         except:
-            print(path)
             print(f"{bcolors.FAIL}-> Error: file not found{bcolors.ENDC}")
             return
         path += ".enc"
