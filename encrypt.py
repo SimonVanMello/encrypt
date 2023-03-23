@@ -19,7 +19,7 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def loadData() -> dict:
-    with open("/home/tropico/Sync/code/Scripts/encrypt/settings.json") as f:
+    with open(f"{os.path.dirname(__file__)}/settings.json") as f:
         return json.load(f)
 
 def decrypt(key: str, source: str, decode=True) -> str:
@@ -31,7 +31,7 @@ def decrypt(key: str, source: str, decode=True) -> str:
     decryptor = AES.new(key, AES.MODE_CBC, IV)
     data = decryptor.decrypt(source[AES.block_size:])  # decrypt
     padding = data[-1]  # pick the padding value from the end; Python 2.x: ord(data[-1])
-    if data[-padding:] != bytes([padding]) * padding:  # Python 2.x: chr(padding) * padding
+    if data[-padding:] != bytes([padding]) * padding:
         raise ValueError("Invalid padding...")
     return data[:-padding].decode()  # remove the padding
 
@@ -42,7 +42,7 @@ def encrypt(key: str, source: str, encode=True):
     IV = Random.new().read(AES.block_size)  # generate IV
     encryptor = AES.new(key, AES.MODE_CBC, IV)
     padding = AES.block_size - len(source) % AES.block_size  # calculate needed padding
-    source += bytes([padding]) * padding  # Python 2.x: source += chr(padding) * padding
+    source += bytes([padding]) * padding
     data = IV + encryptor.encrypt(source)  # store the IV at the beginning and encrypt
     return base64.b64encode(data).decode("latin-1") if encode else data
 
@@ -129,6 +129,7 @@ def main(args: list):
 
 
 try:
+    print()
     settings = loadData()
     settings["removeOriginalAfterEncryption"] = settings["removeOriginalAfterEncryption"].upper()
     main(sys.argv[1:])
