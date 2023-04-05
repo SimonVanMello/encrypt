@@ -7,7 +7,7 @@ cd encrypt
 pip install -r requirements.txt
 ```
 ## Usage
-If you are on linux i recommend you to put an alias in your .bashrc or .zshrc or equivalent for whatever shell you're using.
+If you are on linux i recommend you to put an alias in your .bashrc or .zshrc or equivalent for whatever shell you're using or to put the files somewhere on your path.
 ```
 alias encrypt="python3 /path/to/encrypt.py"
 ```
