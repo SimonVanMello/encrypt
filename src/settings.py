@@ -5,4 +5,4 @@ class Settings:
 
 	# If True: ask for a single password before encrypting/decrypting
 	# If False: ask a password for each file
-	USE_SAME_PASSWORD_FOR_ALL_FILES: bool = False
+	USE_SAME_PASSWORD_FOR_ALL_FILES: bool = True
