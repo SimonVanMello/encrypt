@@ -9,8 +9,8 @@ from crypto import Crypto
 
 def main():
 	parser = argparse.ArgumentParser(description="Simple file encryption tool")
-	parser.add_argument("files", nargs='+', help="Name of the files to process")
-	parser.add_argument("-d", "--decrypt", action="store_true", help="Use the decryption mode")
+	parser.add_argument("files", nargs='+', help="name of the files to process")
+	parser.add_argument("-d", "--decrypt", action="store_true", help="use the decryption mode")
 	parser.add_argument("-v", "--verbose", action="store_true")
 	args = parser.parse_args()
 
@@ -30,12 +30,19 @@ def main():
 			exit(126)
 
 	if args.decrypt:
+		decryption_password = None
+		if Settings.USE_SAME_PASSWORD_FOR_ALL_FILES:
+			Logs.print_warning("Using the same password for all files")
+			decryption_password = Utils.get_decryption_password("all files")
+		
 		for file in files:
 			if not file.filename.endswith(".enc"):
 				Logs.print_error(f"File {file.filename} is not encrypted. Skipping")
 				continue
 
-			decryption_password = Utils.get_decryption_password(file.filename)
+			if not Settings.USE_SAME_PASSWORD_FOR_ALL_FILES:
+				decryption_password = Utils.get_decryption_password(file.filename)
+				
 			try:
 				decrypted_file_content = Crypto.decrypt(decryption_password, file.content)
 				if args.verbose:
@@ -54,12 +61,19 @@ def main():
 				return
 
 	else:
+		encryption_password = None
+		if Settings.USE_SAME_PASSWORD_FOR_ALL_FILES:
+			Logs.print_warning("Using the same password for all files")
+			encryption_password = Utils.get_encryption_password("all files")
+
 		for file in files:
 			if file.filename.endswith(".enc"):
 				Logs.print_error(f"File {file.filename} is already encrypted. Skipping")
 				continue
 
-			encryption_password = Utils.get_encryption_password(file.filename)
+			if not Settings.USE_SAME_PASSWORD_FOR_ALL_FILES:
+				encryption_password = Utils.get_encryption_password(file.filename)
+
 			try:
 				encrypted_content = Crypto.encrypt(encryption_password, file.content)
 				if args.verbose:
