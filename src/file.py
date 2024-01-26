@@ -4,7 +4,7 @@ from logs import Logs
 
 class File:
 	def __init__(self, filename: str) -> None:
-        self.filename: str =  filename
+		self.filename: str = filename
 		self.path: str = os.path.abspath(filename)
 		self.content: str = None
 
