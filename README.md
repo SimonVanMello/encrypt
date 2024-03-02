@@ -2,7 +2,7 @@
 Simple python script that allows you to easily encrypt/decrypt text files using AES encryption.
 ## Install
 ```bash
-git clone https://github.com/TropicoDebug/encrypt.git
+git clone https://github.com/SimonVanMello/encrypt.git
 cd encrypt
 pip install -r requirements.txt
 ```
